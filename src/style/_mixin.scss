@@ -1,0 +1,16 @@
+@mixin flex($a: center, $j: center){
+    display: flex;
+    align-items: $a;
+    justify-content: $j;
+}
+
+@mixin size($h, $w){
+    height: $h;
+    width: $w;
+}
+
+@mixin translateCenter(){
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
