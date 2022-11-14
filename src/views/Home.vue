@@ -1,22 +1,21 @@
 <script setup lang="ts">
 import MainList from "@/components/lists/MainList.vue";
 import FileUpdate from "@/components/popups/FileUpdate.vue";
-
 import { ref } from "vue";
 
 const updateBoxShowing = ref(false);
-
 const fileUpageShowing = ref(false);
+
 </script>
 
-
 <template>
-<Transition>
-  <FileUpdate v-if="fileUpageShowing" />
-  </Transition>
+
   <div id="home" @click.capture="updateBoxShowing = false">
     <MainList />
     <div class="home-content">
+      <Transition>
+        <FileUpdate v-if="fileUpageShowing" />
+      </Transition>
       <div class="content-bar">
         <div class="search-box">
           <img
