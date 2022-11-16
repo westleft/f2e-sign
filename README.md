@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/hYMUgni.jpg" align="right" />
+<img src="https://i.imgur.com/hYMUgni.jpg" width="400" align="right" />
 
 # 今晚，我想來點點簽
 
