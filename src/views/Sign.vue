@@ -1,42 +1,75 @@
 <script setup lang="ts">
 import SignList from "@/components/lists/SignList.vue";
-import { onMounted, ref } from "vue";
-import { useStore } from "vuex"
+import WriteSign from "@/components/popups/WriteSign.vue";
+import ChooseSign from "@/components/popups/ChooseSign.vue";
 
-import { useCanvas } from "@/composables/canvas";
-
+// plugin
+import { onMounted, provide, Ref, ref } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import { fabric } from "fabric";
+
+// composables
+import { useCanvas } from "@/composables/canvas";
 import { useReadPDF, usePdfDownloader } from "@/composables/pdf";
 
+import { PopUnit, SignUnit } from "@/tools/classes"
+
 const store = useStore();
+const router = useRouter();
 
 const { PdfReader } = useReadPDF();
-
 const { CanvasUnit, cannvasDOM } = useCanvas();
-const paintDOM = ref();
-const singImage = ref();
+const { downloadPDF } = usePdfDownloader();
 
 let canvasUnit: typeof CanvasUnit;
-let pdfReader: typeof PdfReader;
+let pdfReader: InstanceType<typeof PdfReader>;
+
+onMounted(() => {
+  renderPDF();
+});
 
 // 上傳 PDF 顯示到畫面上
-onMounted(() => {
-    const file = store.getters["Files/getFiles"][0]["file"] 
-    console.log(file)
-    const fabricCan = new fabric.Canvas("canvas");
-    pdfReader = new PdfReader(fabricCan);
-    pdfReader.pdfEvent(file)
-})
+const renderPDF = () => {
+  // 沒檔案? 給我滾回首頁
+  const files = store.getters["Files/getFiles"];
+  if (files.length === 0) {
+    router.push({ name: "Home" });
+    return;
+  }
+  const file = store.getters["Files/getFiles"][0]["file"];
+  const fabricCan = new fabric.Canvas("canvas");
+  pdfReader = new PdfReader(fabricCan);
+  pdfReader.pdfEvent(file);
+};
+
+const addToPDF = () => {
+  signUnit.addToPDF(pdfReader);
+  popUnit.changePop("");
+}
+
+const download = () => {
+  downloadPDF(pdfReader.canvas);
+}
+
+const popUnit = new PopUnit();
+const signUnit = new SignUnit();
+
+provide("addToPDF", addToPDF);
+provide("popUnit", popUnit);
+provide("signUnit", signUnit);
+
 </script>
 
 <template>
   <div id="sign">
     <SignList />
     <div class="sign-content">
-      <!-- <Transition>
-        <FileUpdate v-if="true" />
-      </Transition> -->
       <div class="content-bar">
+        <TransitionGroup tag="div">
+          <WriteSign v-if="popUnit.current.value === 'sign'" />
+          <ChooseSign v-if="popUnit.current.value === 'choose'" />
+        </TransitionGroup>
         <ul class="step-list">
           <li class="list-item">
             <p class="list-text"><span>1</span>上傳檔案</p>
@@ -61,8 +94,18 @@ onMounted(() => {
       </div>
 
       <div class="sign-main-box">
-        <canvas ref="cannvasDOM" id="canvas" style="box-shadow: 0px 0px 4px 4px #D8D8D8;"></canvas>
+        <canvas
+          ref="cannvasDOM"
+          id="canvas"
+          style="box-shadow: 0px 0px 4px 4px #d8d8d8"
+        ></canvas>
       </div>
+      <img
+        class="download-pdf"
+        @click="download"
+        src="@/assets/images/other/download.png"
+        alt="下載pdf圖示"
+      />
     </div>
   </div>
 </template>
@@ -72,6 +115,7 @@ onMounted(() => {
   @include flex();
   @include size(100%, 100%);
   background-color: $color-orange;
+  // background-color: #fff;
   border-radius: 2vw;
   padding: 2vw;
 }
@@ -80,7 +124,7 @@ onMounted(() => {
   @include size(100%, 88%);
   background-color: #fff;
   border-radius: 2vw;
-  padding: 4vh 2vw;
+  padding: 4vh 2vw 6vh;
   position: relative;
   > .content-bar {
     @include flex();
@@ -117,14 +161,22 @@ onMounted(() => {
 
   > .sign-main-box {
     @include flex(flex-start);
-    overflow: scroll;
+    overflow-x: hidden;
     height: 100%;
     width: 100%;
     padding: 4vh 0;
-    > #canvas {
-        min-width: 40vw;
+    &::-webkit-scrollbar {
+      opacity: 0;
     }
   }
+}
+
+.download-pdf {
+  @include size(4vw, 4vw);
+  position: absolute;
+  bottom: 4vh;
+  right: 2.8vw;
+  cursor: pointer;
 }
 
 /* we will explain what these classes do next! */

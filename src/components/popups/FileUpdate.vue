@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { computed, Ref, ref } from "vue";
+import { computed, inject, Ref, ref } from "vue";
 import { useStore } from "vuex";
+
+const showPop = inject<Ref<boolean>>("showPop"); // 控制是否顯示
 
 const store = useStore();
 
@@ -11,15 +13,16 @@ class FileUnit {
   }
 
   // 取得上傳的 PDF 檔案
-  changeFile() {
-    const file = event?.target?.files[0];
+  changeFile(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = (target.files as FileList)[0];
     this.fileName.value = file.name;
     this.setFile(file);
   }
 
-  dropOver() {
-    const file = event?.dataTransfer.files[0];
-    if (event?.dataTransfer.files[0].type.indexOf("pdf") === -1) {
+  dropOver(event: DragEvent) {
+    const file = event?.dataTransfer!.files[0];
+    if (event?.dataTransfer!.files[0].type.indexOf("pdf") === -1) {
       alert("僅支援副檔名 .pdf 檔案");
       return;
     }
@@ -49,6 +52,7 @@ const hasFile = computed(() => {
         class="file-close"
         src="@/assets/images/other/pop-close.png"
         alt="關閉視窗按鈕"
+        @click="showPop = false"
       />
       <ul class="update-list">
         <li class="list-item">
@@ -98,11 +102,7 @@ const hasFile = computed(() => {
         </div>
       </div>
 
-      <RouterLink 
-        v-if="!hasFile" 
-        class="update-submit" 
-        :to="{ name: 'Sign' }"
-      >
+      <RouterLink v-if="!hasFile" class="update-submit" :to="{ name: 'Sign' }">
         確認
       </RouterLink>
     </div>
@@ -276,7 +276,7 @@ const hasFile = computed(() => {
       }
     }
 
-    &:nth-child(2){
+    &:nth-child(2) {
       > .task-input {
         cursor: not-allowed;
       }

@@ -7,11 +7,11 @@ import { onMounted } from 'vue';
 export function useReadPDF() {
     const Base64Prefix = "data:application/pdf;base64,";
 
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "../public/plugin/build/pdf.worker.js";
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "../plugin/build/pdf.worker.js";
 
     class PdfReader {
-        canvas: fabric
-        constructor(canvas: fabric){
+        canvas: any
+        constructor(canvas: any){
             this.canvas = canvas;
         }
 
@@ -24,9 +24,9 @@ export function useReadPDF() {
             });
         }
 
-        printPDF = async (pdfData) => {
-            pdfData = await this.readBlob(pdfData);
-            const data = atob(pdfData.substring(Base64Prefix.length));
+        printPDF = async (pdfData: File) => {
+            const dataStr = await this.readBlob(pdfData);
+            const data = atob((dataStr as string).substring(Base64Prefix.length));
     
             // Using DocumentInitParameters object to load binary data.
             const pdfDoc = await pdfjsLib.getDocument({ data }).promise;
@@ -43,13 +43,13 @@ export function useReadPDF() {
                 canvasContext: context,
                 viewport,
             };
-            const renderTask = pdfPage.render(renderContext);
+            const renderTask = pdfPage.render(renderContext as any);
     
             // 回傳做好的canvas
             return renderTask.promise.then(() => canvas);
         }
 
-        pdfToImage = async (pdfData) => {
+        pdfToImage = async (pdfData: HTMLCanvasElement) => {
             const scale = 1 / window.devicePixelRatio;
             return new fabric.Image(pdfData, {
                 scaleX: scale,
@@ -64,10 +64,8 @@ export function useReadPDF() {
             const pdfImage = await this.pdfToImage(pdfData);
     
             // 調整canvas大小
-            console.log(pdfImage.width)
-            console.log(window.devicePixelRatio)
-            this.canvas.setWidth(pdfImage.width);
-            this.canvas.setHeight(pdfImage.height / window.devicePixelRatio);
+            this.canvas.setWidth((pdfImage.width as number) / window.devicePixelRatio);
+            this.canvas.setHeight((pdfImage.height as number) / window.devicePixelRatio);
             this.canvas.setBackgroundImage(pdfImage, this.canvas.renderAll.bind(this.canvas));
         } 
     }
@@ -79,13 +77,14 @@ export function useReadPDF() {
 export function usePdfDownloader(){
     const pdf = new jsPDF();
 
-    function downloadPDF(canvas){
+    function downloadPDF(canvas: HTMLCanvasElement){
     // 將 canvas 存為圖片
         const image = canvas.toDataURL("image/png");
-    
+
         // 設定背景在 PDF 中的位置及大小
         const width = pdf.internal.pageSize.width;
         const height = pdf.internal.pageSize.height;
+
         pdf.addImage(image, "png", 0, 0, width, height);
     
         // 將檔案取名並下載

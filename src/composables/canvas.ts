@@ -13,7 +13,7 @@ export function useCanvas() {
             this.canvas = canvas;
             this.ctx = canvas.getContext("2d");
             this.ctx!.lineWidth = 4;
-            this.ctx!.strokeStyle = "#FFA500";
+            this.ctx!.strokeStyle = "#000000";
             this.ctx!.lineCap = "round";
 
             this.addEvent();
@@ -60,18 +60,19 @@ export function useCanvas() {
             this.ctx!.stroke();
         }
 
+        public changeStrokeColor = (color: string) => {
+            this.ctx!.strokeStyle = color;
+        }
+
         // 重新設定畫布
-        private reset = () => {
+        public reset = () => {
             this.ctx!.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
 
         // 儲存圖片
         public saveImage = () => {
             const newImg = this.canvas.toDataURL("image/png");
-            console.log(newImg)
-            return newImg
-            // showImage.src = newImg;
-            // localStorage.setItem("img", newImg);
+            return newImg;
         }
 
         private addEvent() {
@@ -86,10 +87,6 @@ export function useCanvas() {
             this.canvas.addEventListener("touchend", this.finishedPosition);
             this.canvas.addEventListener("touchcancel", this.finishedPosition);
             this.canvas.addEventListener("touchmove", this.draw);
-
-            // 重設按鈕
-            // clearBtn.addEventListener("click", this.reset);
-            // saveBtn.addEventListener("click", this.saveImage);
         }
 
     }

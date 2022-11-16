@@ -1,22 +1,47 @@
+<script setup lang="ts">
+import { inject } from "@vue/runtime-core";
+import { useStore } from "vuex";
+import { PopUnit } from "@/tools/classes"
+
+const store = useStore();
+
+const popUnit = inject("popUnit") as PopUnit;
+
+// 檢查有沒有建立過簽名檔
+const checkHasSign = () => {
+  const signList = store.getters["Files/getSigns"];
+  if(signList.length === 0){
+    popUnit.changePop('sign');
+  } else {
+    popUnit.changePop('choose');
+  }
+}
+
+</script>
+
+
 <template>
   <div class="main-list">
-    <img class="re-logo" src="@/assets/images/logos/sign-logo.png" alt="" />
+    <img class="re-logo" src="@/assets/images/logos/sign-logo.png" alt="logo圖" />
     <ul class="list">
       <li class="list-item">
-        <button class="list-btn">
-          <img class="list-img" src="@/assets/images/listIcons/sign1.png" alt="" />
+        <button 
+          :class="['list-btn', { current: popUnit.current.value === 'sign' }]"
+          @click="checkHasSign"
+        >
+          <img class="list-img" src="@/assets/images/listIcons/sign1.png" alt="簽名檔圖示" />
           簽名檔
         </button>
       </li>
       <li class="list-item">
-        <button class="list-btn">
-          <img class="list-img" src="@/assets/images/listIcons/sign2.png" alt="" />
+        <button class="list-btn disabled">
+          <img class="list-img" src="@/assets/images/listIcons/sign2.png" alt="加入日期圖示" />
           加入日期
         </button>
       </li>
       <li class="list-item">
-        <button class="list-btn">
-          <img class="list-img" src="@/assets/images/listIcons/sign3.png" alt="" />
+        <button class="list-btn disabled">
+          <img class="list-img" src="@/assets/images/listIcons/sign3.png" alt="文字編輯圖示" />
           文字編輯
         </button>
       </li>
@@ -32,7 +57,6 @@
   @include size(100%, 12%);
   flex-direction: column;
   padding-right: 1.6vw;
-
   position: relative;
   > .re-logo {
     width: 90%;
@@ -61,6 +85,18 @@
           margin-right: 0.6vw;
         }        
       }
+
+      .current {
+        color: #fff;
+        background-color: $color-purple;
+        > .list-img {
+          filter: invert(100%);
+        }
+      }
+
+      .disabled {
+        cursor: not-allowed;
+      }
     }
     .router-link-active {
       background-color: #fff;
@@ -72,11 +108,21 @@
     }
   }
 
-
   > .ill-icon {
     position: relative;
     bottom: -10vh;
     width: 14vw;
   }
+}
+
+/* we will explain what these classes do next! */
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

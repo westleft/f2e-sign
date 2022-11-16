@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import MainList from "@/components/lists/MainList.vue";
 import FileUpdate from "@/components/popups/FileUpdate.vue";
-import { ref } from "vue";
+import { provide, ref } from "vue";
 
 const updateBoxShowing = ref(false);
-const fileUpageShowing = ref(false);
-
+const showPop = ref(false);
+provide("showPop", showPop)
 </script>
 
 <template>
@@ -14,7 +14,7 @@ const fileUpageShowing = ref(false);
     <MainList />
     <div class="home-content">
       <Transition>
-        <FileUpdate v-if="fileUpageShowing" />
+        <FileUpdate v-if="showPop" />
       </Transition>
       <div class="content-bar">
         <div class="search-box">
@@ -50,11 +50,11 @@ const fileUpageShowing = ref(false);
               src="@/assets/images/home/update-box.png"
               alt=""
             />
-            <div class="update-btn" @click="fileUpageShowing = true">
+            <div class="update-btn" @click="showPop = true">
               <img src="@/assets/images/home/update-sign1.png" alt="" />
               <p class="up-text">自己簽署<br /><span>唯一的簽署者</span></p>
             </div>
-            <div class="update-btn other">
+            <div class="update-btn other" disabled>
               <img src="@/assets/images/home/update-sign2.png" alt="" />
               <p class="up-text">
                 邀請他人簽署<br /><span>指派簽署欄位給其他人</span>
@@ -93,7 +93,7 @@ const fileUpageShowing = ref(false);
         transform: translateY(-50%);
         position: absolute;
         width: 1vw;
-        left: 0.6vw;
+        left: 0.8vw;
       }
       > .search-input {
         box-sizing: border-box;
@@ -127,7 +127,7 @@ const fileUpageShowing = ref(false);
   }
   > .update-btn {
     @include flex();
-    @include size(48px, 48px);
+    @include size(3.2vw, 3.2vw);
     position: absolute;
     right: 2vw;
     bottom: 4vh;
@@ -171,7 +171,7 @@ const fileUpageShowing = ref(false);
           color: #fff;
 
           > span {
-            font-size: 0.4vw;
+            font-size: 0.8vw;
           }
         }
       }
@@ -179,6 +179,7 @@ const fileUpageShowing = ref(false);
       > .other {
         background-color: $color-orange;
         margin: 2vh 0 4vh;
+        cursor: not-allowed;
       }
     }
   }

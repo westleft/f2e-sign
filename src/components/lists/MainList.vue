@@ -9,25 +9,25 @@
         </RouterLink>
       </li>
       <li class="list-item">
-        <RouterLink class="list-link" :to="{ name: 'Test' }">
+        <RouterLink class="list-link disabled" disabled :to="{ name: 'Sign' }">
           <img class="list-img" src="@/assets/images/listIcons/main2.png" alt="" />
           待他人簽署
         </RouterLink>
       </li>
       <li class="list-item">
-        <RouterLink class="list-link" :to="{ name: 'Test' }">
+        <RouterLink class="list-link disabled" disabled :to="{ name: 'Sign' }">
           <img class="list-img" src="@/assets/images/listIcons/main3.png" alt="" />
           已完成
         </RouterLink>
       </li>
       <li class="list-item">
-        <RouterLink class="list-link" :to="{ name: 'Test' }">
+        <RouterLink class="list-link disabled" disabled :to="{ name: 'Sign' }">
           <img class="list-img" src="@/assets/images/listIcons/main4.png" alt="" />
           已取消
         </RouterLink>
       </li>
       <li class="list-item">
-        <RouterLink class="list-link" :to="{ name: 'Test' }">
+        <RouterLink class="list-link disabled" disabled :to="{ name: 'Sign' }">
           <img class="list-img" src="@/assets/images/listIcons/main5.png" alt="" />
           草稿
         </RouterLink>
@@ -36,13 +36,13 @@
 
     <ul class="sub-list">
       <li class="list-item">
-        <RouterLink class="list-link archive" :to="{ name: 'Test' }">
+        <RouterLink class="list-link archive disabled" disabled :to="{ name: 'Sign' }">
           <img class="list-img" src="@/assets/images/listIcons/main6.png" alt="" />
           封存
         </RouterLink>
       </li>
       <li class="list-item">
-        <RouterLink class="list-link trash" :to="{ name: 'Test' }">
+        <RouterLink class="list-link trash disabled" disabled :to="{ name: 'Sign' }">
           <img class="list-img" src="@/assets/images/listIcons/main7.png" alt="" />
           垃圾桶
         </RouterLink>
@@ -77,14 +77,16 @@
         padding: 3% 0 3% 8%;
         border-radius: 2vw 0 0 2vw;
         text-decoration: none;
+        color: #fff;
+        font-size: 1vw;
+        line-height: 140%;
         > .list-img {
           width: 1.6vw;
           margin-right: 0.6vw;
         }
-
-        color: #fff;
-        font-size: 1vw;
-        line-height: 140%;
+      }
+      .disabled {
+        cursor: not-allowed;
       }
     }
     .router-link-active {
